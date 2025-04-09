@@ -1,0 +1,61 @@
+﻿@page "/blazorroadmap"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Blazor_Movies_02.Models
+@using Blazor_Movies_02.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMoviesRoadMap> DbFactory2
+
+<h3>BlazorRoadMap</h3>
+
+<p>
+    <a href="blazorroadmap/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.RoadMap">
+    <PropertyColumn Property="blazorroadmap => blazorroadmap.Id" />
+    <PropertyColumn Property="blazorroadmap => blazorroadmap.TitleObject" />
+    <PropertyColumn Property="blazorroadmap => blazorroadmap.Description" />
+    <TemplateColumn Context="blazorroadmap">
+        <a href="@($"blazorroadmap/edit?id={blazorroadmap.Id}")">Edit</a> |
+        <a href="@($"blazorroadmap/details?id={blazorroadmap.Id}")">Details</a> |
+        <a href="@($"blazorroadmap/delete?id={blazorroadmap.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var blazorroadmap in context.RoadMap)
+        {
+            <tr>
+                <td>@blazorroadmap.Id</td>
+                <td>@blazorroadmap.TitleObject</td>
+                <td>@blazorroadmap.Description</td>
+                <td>
+                    <a href="@($"blazorroadmap/edit?id={blazorroadmap.Id}")">Edit</a> |
+                    <a href="@($"blazorroadmap/details?id={blazorroadmap.Id}")">Details</a> |
+                    <a href="@($"blazorroadmap/delete?id={blazorroadmap.Id}")">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private BlazorMoviesRoadMap context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory2.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
+

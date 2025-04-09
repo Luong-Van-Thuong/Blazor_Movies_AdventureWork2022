@@ -1,0 +1,39 @@
+﻿@page "/models"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Blazor_Movies_02.Models
+@using Blazor_Movies_02.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMovies02Context> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="models/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Model">
+    <PropertyColumn Property="model => model.Title" />
+    <PropertyColumn Property="model => model.ReleaseDate" />
+    <PropertyColumn Property="model => model.Genre" />
+    <PropertyColumn Property="model => model.Price" />
+
+    <TemplateColumn Context="model">
+        <a href="@($"models/edit?id={model.Id}")">Edit</a> |
+        <a href="@($"models/details?id={model.Id}")">Details</a> |
+        <a href="@($"models/delete?id={model.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorMovies02Context context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

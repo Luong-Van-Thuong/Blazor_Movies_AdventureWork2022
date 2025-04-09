@@ -1,0 +1,93 @@
+﻿@page "/blazorroadmap/edit"
+@inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMoviesRoadMap> DbFactory2
+@using Blazor_Movies_02.Models
+<h3>BlazorRoadMapEdit</h3>
+
+@if (roadMap is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="roadMap" OnValidSubmit="UpdateModel" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="mb-3">
+                    <label for="roadmapid" class="form-label">Id:</label>
+                    <InputNumber id="roadmapid" @bind-Value="roadMap.Id" class="form-control" />
+                    <ValidationMessage For="() => roadMap.Id" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="titleobject" class="form-label">TitleObject:</label>
+                    <InputText id="titleobject" @bind-Value="roadMap.TitleObject" class="form-control" />
+                    <ValidationMessage For="() => roadMap.TitleObject" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="releasedate" class="form-label">ReleaseDate:</label>
+                    <InputText id="releasedate" @bind-Value="roadMap.Description" class="form-control" />
+                    <ValidationMessage For="() => roadMap.Description" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/blazorroadmap">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private RoadMap? roadMap { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory2.CreateDbContext();
+        roadMap ??= await context.RoadMap.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (roadMap is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateModel()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(roadMap!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ModelExists(roadMap!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/blazorroadmap");
+    }
+
+    private bool ModelExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.RoadMap.Any(e => e.Id == id);
+    }
+}

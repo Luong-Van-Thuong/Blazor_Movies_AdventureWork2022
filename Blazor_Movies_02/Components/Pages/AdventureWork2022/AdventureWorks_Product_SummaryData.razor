@@ -1,0 +1,62 @@
+﻿@page "/adventureworkproduct/product_summarydata"
+@using Microsoft.EntityFrameworkCore
+@using Blazor_Movies_02.Models
+
+@* @inject IDbContextFactory<AdventureWorks2022> DbFactory *@
+@inject AdventureWorks2022 DbContext 
+
+<h3>AdventureWorks_Product_SummaryData</h3>
+<h3>Danh sách tồn kho sản phẩm</h3>
+@if (inventoryList is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Location Name</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in inventoryList)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.LocationName</td>
+                    <td>@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+})
+
+@code {
+
+    public class ProductInventoryView
+    {
+        public string ProductName { get; set; }
+        public string LocationName { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    private List<ProductInventoryView> inventoryList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var db = DbFactory.CreateDbContext();
+        inventoryList = (from pi in DbContext.ProductInventories
+                         join p in DbContext.Product on pi.ProductID equals p.ProductID
+                         join l in DbContext.Locations on pi.LocationID equals l.LocationID
+                         select new ProductInventoryView
+                             {
+                                 ProductName = p.Name,
+                                 LocationName = l.Name,
+                                 Quantity = pi.Quantity
+                             }).ToList();
+    }
+    
+}

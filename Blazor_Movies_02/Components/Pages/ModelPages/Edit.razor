@@ -1,0 +1,104 @@
+﻿@page "/models/edit"
+@* @using Microsoft.EntityFrameworkCore
+@using Blazor_Movies_02.Models
+
+@inject NavigationManager NavigationManager *@
+@inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMovies02Context> DbFactory
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Model</h2>
+<hr />
+@if (Model is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Model" OnValidSubmit="UpdateModel" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Model.Id" value="@Model.Id" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="Model.Title" class="form-control" />
+                    <ValidationMessage For="() => Model.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="releasedate" class="form-label">ReleaseDate:</label>
+                    <InputDate id="releasedate" @bind-Value="Model.ReleaseDate" class="form-control" />
+                    <ValidationMessage For="() => Model.ReleaseDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="genre" class="form-label">Genre:</label>
+                    <InputText id="genre" @bind-Value="Model.Genre" class="form-control" />
+                    <ValidationMessage For="() => Model.Genre" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price:</label>
+                    <InputNumber id="price" @bind-Value="Model.Price" class="form-control" />
+                    <ValidationMessage For="() => Model.Price" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/models">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Model? Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Model ??= await context.Model.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Model is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateModel()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Model!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ModelExists(Model!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/models");
+    }
+
+    private bool ModelExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Model.Any(e => e.Id == id);
+    }
+}

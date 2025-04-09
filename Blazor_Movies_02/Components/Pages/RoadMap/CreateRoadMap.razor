@@ -1,0 +1,49 @@
+﻿@page "/blazorroadmap/create"
+@inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMoviesRoadMap> DbFactory2
+<PageTitle>Create</PageTitle>
+<h1>Create RoadMap</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="RoadMap" OnValidSubmit="AddModel" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="roadmapid" class="form-label">Id:</label>
+                <InputNumber id="roadmapid" @bind-Value="RoadMap.Id" class="form-control" />
+                <ValidationMessage For="() => RoadMap.Id" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="titleobject" class="form-label">TitleObject:</label>
+                <InputText id="titleobject" @bind-Value="RoadMap.TitleObject" class="form-control" />
+                <ValidationMessage For="() => RoadMap.TitleObject" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="releasedate" class="form-label">ReleaseDate:</label>
+                <InputText id="releasedate" @bind-Value="RoadMap.Description" class="form-control" />
+                <ValidationMessage For="() => RoadMap.Description" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+<div>
+    <a href="/blazorroadmap">Back to List</a>
+</div>
+@code {
+    [SupplyParameterFromForm]
+    private RoadMap RoadMap { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddModel()
+    {
+        using var context = DbFactory2.CreateDbContext();
+        context.RoadMap.Add(RoadMap);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/blazorroadmap");
+    }
+}

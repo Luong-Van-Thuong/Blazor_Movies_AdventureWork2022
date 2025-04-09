@@ -1,0 +1,112 @@
+﻿@page "/adventureworkproduct/details"
+<h3>BlazorRoadMapDetails</h3>
+
+@inject IDbContextFactory<Blazor_Movies_02.Data.AdventureWorks2022> DbFactory
+<PageTitle>Product Detial</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Model</h2>
+    <hr />
+    @if (model is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Product ID</dt>
+            <dd class="col-sm-9">@model.ProductID</dd>
+
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@model.Name</dd>
+
+            <dt class="col-sm-3">Product Number</dt>
+            <dd class="col-sm-9">@model.ProductNumber</dd>
+
+            <dt class="col-sm-3">Make Flag</dt>
+            <dd class="col-sm-9">@model.MakeFlag</dd>
+
+            <dt class="col-sm-3">Finished Goods Flag</dt>
+            <dd class="col-sm-9">@model.FinishedGoodsFlag</dd>
+
+            <dt class="col-sm-3">Color</dt>
+            <dd class="col-sm-9">@model.Color</dd>
+
+            <dt class="col-sm-3">Safety Stock Level</dt>
+            <dd class="col-sm-9">@model.SafetyStockLevel</dd>
+
+            <dt class="col-sm-3">Reorder Point</dt>
+            <dd class="col-sm-9">@model.ReorderPoint</dd>
+
+            <dt class="col-sm-3">List Price</dt>
+            <dd class="col-sm-9">@model.ListPrice</dd>
+
+            <dt class="col-sm-3">Size</dt>
+            <dd class="col-sm-9">@model.Size</dd>
+
+            <dt class="col-sm-3">Size Unit Measure Code</dt>
+            <dd class="col-sm-9">@model.SizeUnitMeasureCode</dd>
+
+            <dt class="col-sm-3">Weight Unit Measure Code</dt>
+            <dd class="col-sm-9">@model.WeightUnitMeasureCode</dd>
+
+            <dt class="col-sm-3">Weight</dt>
+            <dd class="col-sm-9">@model.Weight</dd>
+
+            <dt class="col-sm-3">Days to Manufacture</dt>
+            <dd class="col-sm-9">@model.DaysToManufacture</dd>
+
+            <dt class="col-sm-3">Product Line</dt>
+            <dd class="col-sm-9">@model.ProductLine</dd>
+
+            <dt class="col-sm-3">Class</dt>
+            <dd class="col-sm-9">@model.Class</dd>
+
+            <dt class="col-sm-3">Style</dt>
+            <dd class="col-sm-9">@model.Style</dd>
+
+            <dt class="col-sm-3">Product Subcategory ID</dt>
+            <dd class="col-sm-9">@model.ProductSubcategoryID</dd>
+
+            <dt class="col-sm-3">Product Model ID</dt>
+            <dd class="col-sm-9">@model.ProductModelID</dd>
+
+            <dt class="col-sm-3">Sell End Date</dt>
+            <dd class="col-sm-9">@model.SellEndDate</dd>
+
+            <dt class="col-sm-3">Discontinued Date</dt>
+            <dd class="col-sm-9">@model.DiscontinuedDate</dd>
+
+            <dt class="col-sm-3">Rowguid</dt>
+            <dd class="col-sm-9">@model.Rowguid</dd>
+
+            <dt class="col-sm-3">Modified Date</dt>
+            <dd class="col-sm-9">@model.ModifiedDate</dd>
+        </dl>
+
+        <div>
+            <a href="@($"/adventureworkproduct/edit?id={model.ProductID}")">Edit</a> |
+            <a href="@($"/adventureworkproduct")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Product? model;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        model = await context.Product.FirstOrDefaultAsync(m => m.ProductID == Id);
+
+        if (model is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

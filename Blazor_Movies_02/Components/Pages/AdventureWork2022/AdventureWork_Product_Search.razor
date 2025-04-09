@@ -1,0 +1,73 @@
+﻿@page "/adventureworkproduct"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Blazor_Movies_02.Models
+@using Blazor_Movies_02.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<Blazor_Movies_02.Data.AdventureWorks2022> DbFactory
+
+<h3>Product List</h3>
+
+<p>
+    <a href="adventureworkproduct/create">Create New</a>
+</p>
+<p>
+    <a href="adventureworkproduct/product_summarydata">Summary Data</a>
+</p>
+<div>
+    <form action="/adventureworkproduct" data-enhance>
+        <input type="search" name="titleFilter" />
+        <input type="submit" value="Search" />
+    </form>
+</div>
+
+<QuickGrid Items="FilteredMovies" Class="table">
+    <PropertyColumn Property="p => p.ProductID" Title="ID" />
+    <PropertyColumn Property="p => p.Name" />
+    <PropertyColumn Property="p => p.ProductNumber" />
+    <PropertyColumn Property="p => p.MakeFlag" />
+    <PropertyColumn Property="p => p.FinishedGoodsFlag" />
+    <PropertyColumn Property="p => p.Color" />
+    <PropertyColumn Property="p => p.SafetyStockLevel" />
+    <PropertyColumn Property="p => p.ReorderPoint" />
+    <PropertyColumn Property="p => p.ListPrice" />
+    <PropertyColumn Property="p => p.Size" />
+    <PropertyColumn Property="p => p.SizeUnitMeasureCode" />
+    <PropertyColumn Property="p => p.WeightUnitMeasureCode" />
+    <PropertyColumn Property="p => p.Weight" />
+    <PropertyColumn Property="p => p.DaysToManufacture" />
+    <PropertyColumn Property="p => p.ProductLine" />
+    <PropertyColumn Property="p => p.Class" />
+    <PropertyColumn Property="p => p.Style" />
+    <PropertyColumn Property="p => p.ProductSubcategoryID" />
+    <PropertyColumn Property="p => p.ProductModelID" />
+    <PropertyColumn Property="p => p.SellEndDate" />
+    <PropertyColumn Property="p => p.DiscontinuedDate" />
+    <PropertyColumn Property="p => p.Rowguid" />
+    <PropertyColumn Property="p => p.ModifiedDate" />
+
+    <TemplateColumn Context="product">
+        <a href="@($"adventureworkproduct/edit?id={product.ProductID}")">Edit</a> |
+        <a href="@($"adventureworkproduct/details?id={product.ProductID}")">Details</a> |
+        <a href="@($"adventureworkproduct/delete?id={product.ProductID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private AdventureWorks2022 context = default!;
+    private List<Product> products = new();
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        products = context.Product.Take(50).ToList();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    [SupplyParameterFromQuery]
+    private string? TitleFilter { get; set; }
+
+    private IQueryable<Product> FilteredMovies =>
+        context.Product.Where(m => m.Name!.Contains(TitleFilter ?? string.Empty));
+}
