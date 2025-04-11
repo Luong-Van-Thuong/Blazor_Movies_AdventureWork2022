@@ -18,47 +18,92 @@
     <button class="btn btn-primary m-1" @onclick="findToProductModel">Tìm theo mẫu Model </button>
     <button class="btn btn-primary m-1" @onclick="findToProductLine">Tìm theo product line </button>
     <button class="btn btn-primary m-1" @onclick="findToWeight">Tìm theo weight </button>
-    <button class="btn btn-primary m-1" >Tìm theo  </button>
 
 </div>
+
+<div>
+    <button class="btn btn-primary m-1" @onclick="quantityFormLocailName">Số lượng sản phẩm tồn kho theo vị trí </button> @* Tên sản phẩm (Product.Name),Vị trí lưu trữ (Location.Name),Số lượng tồn kho (ProductInventory.Quantity) *@
+    <button class="btn btn-primary m-1" @onclick="TongSoLuong">Tổng tồn kho của mỗi sản phẩm</button> @* Tên sản phẩm,Tổng tồn kho *@
+    <button class="btn btn-primary m-1">Tổng tồn kho của mỗi sản phẩm theo vị trí</button> @* Tên sản phẩm,Tổng tồn kho theo vị trí *@
+    <button class="btn btn-primary m-1">Tổng số sản phẩm sắp hết hàng</button> @* những sản phẩm có tồn kho tổng nhỏ hơn một ngưỡng nhất định (ví dụ 100). *@
+    <button class="btn btn-primary m-1">Số lượng hàng tồn kho</button> @* Cho phép người dùng cập nhật số lượng tồn kho cho một sản phẩm tại một vị trí cụ thể. *@
+    <button class="btn btn-primary m-1">Export To Excel</button> @* Export tồn kho ra Excel *@
+    <button class="btn btn-primary m-1">Export To Excel</button> @* Export tồn kho ra PDF *@
+</div>
 <p>@serachData</p>
+@if (showGrid)
+{
+    <QuickGrid TGridItem="Product" Items="@product.AsQueryable()" Class="table" ItemKey="@(p => p.ProductID)">
+        <PropertyColumn Property="p => p.ProductID" Title="ID" />
+        <PropertyColumn Property="p => p.Name" />
+        <PropertyColumn Property="p => p.ProductNumber" />
+        <PropertyColumn Property="p => p.MakeFlag" />
+        <PropertyColumn Property="p => p.FinishedGoodsFlag" />
+        <PropertyColumn Property="p => p.Color" />
+        <PropertyColumn Property="p => p.SafetyStockLevel" />
+        <PropertyColumn Property="p => p.ReorderPoint" />
+        <PropertyColumn Property="p => p.ListPrice" />
+        <PropertyColumn Property="p => p.Size" />
+        <PropertyColumn Property="p => p.SizeUnitMeasureCode" />
+        <PropertyColumn Property="p => p.WeightUnitMeasureCode" />
+        <PropertyColumn Property="p => p.Weight" />
+        <PropertyColumn Property="p => p.DaysToManufacture" />
+        <PropertyColumn Property="p => p.ProductLine" />
+        <PropertyColumn Property="p => p.Class" />
+        <PropertyColumn Property="p => p.Style" />
+        <PropertyColumn Property="p => p.ProductSubcategoryID" />
+        <PropertyColumn Property="p => p.ProductModelID" />
+        <PropertyColumn Property="p => p.SellEndDate" />
+        <PropertyColumn Property="p => p.DiscontinuedDate" />
+        <PropertyColumn Property="p => p.Rowguid" />
+        <PropertyColumn Property="p => p.ModifiedDate" />
 
-<QuickGrid TGridItem="Product" Items="@product.AsQueryable()" Class="table" ItemKey="@(p => p.ProductID)">
-    <PropertyColumn Property="p => p.ProductID" Title="ID" />
-    <PropertyColumn Property="p => p.Name" />
-    <PropertyColumn Property="p => p.ProductNumber" />
-    <PropertyColumn Property="p => p.MakeFlag" />
-    <PropertyColumn Property="p => p.FinishedGoodsFlag" />
-    <PropertyColumn Property="p => p.Color" />
-    <PropertyColumn Property="p => p.SafetyStockLevel" />
-    <PropertyColumn Property="p => p.ReorderPoint" />
-    <PropertyColumn Property="p => p.ListPrice" />
-    <PropertyColumn Property="p => p.Size" />
-    <PropertyColumn Property="p => p.SizeUnitMeasureCode" />
-    <PropertyColumn Property="p => p.WeightUnitMeasureCode" />
-    <PropertyColumn Property="p => p.Weight" />
-    <PropertyColumn Property="p => p.DaysToManufacture" />
-    <PropertyColumn Property="p => p.ProductLine" />
-    <PropertyColumn Property="p => p.Class" />
-    <PropertyColumn Property="p => p.Style" />
-    <PropertyColumn Property="p => p.ProductSubcategoryID" />
-    <PropertyColumn Property="p => p.ProductModelID" />
-    <PropertyColumn Property="p => p.SellEndDate" />
-    <PropertyColumn Property="p => p.DiscontinuedDate" />
-    <PropertyColumn Property="p => p.Rowguid" />
-    <PropertyColumn Property="p => p.ModifiedDate" />
+        <TemplateColumn Context="product">
+            <a href="@($"adventureworkproduct/edit?id={product.ProductID}")">Edit</a> |
+            <a href="@($"adventureworkproduct/details?id={product.ProductID}")">Details</a> |
+            <a href="@($"adventureworkproduct/delete?id={product.ProductID}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>    
+}
 
-    <TemplateColumn Context="product">
-        <a href="@($"adventureworkproduct/edit?id={product.ProductID}")">Edit</a> |
-        <a href="@($"adventureworkproduct/details?id={product.ProductID}")">Details</a> |
-        <a href="@($"adventureworkproduct/delete?id={product.ProductID}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+@if (showGrid_quantityFormLocailName)
+{
+    <QuickGrid TGridItem="QuantityFormLocailName" Items="@quantityFormLocailname.AsQueryable()" Class="table">
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NamProduct" Title="Tên sản phẩm" />
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NameLocail" Title="Tên kho" />
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.QuantityProduction" Title="Số lượng sản phẩm còn" />
+    </QuickGrid>
+} 
+@if (showGrid_quantityFormLocailName_1)
+{
+    <QuickGrid TGridItem="QuantityFormLocailName" Items="@quantityFormLocailname.AsQueryable()" Class="table">
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NamProduct" Title="Tên sản phẩm" />
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.QuantityProduction" Title="Số lượng sản phẩm còn" />
+    </QuickGrid>
+}
 @code {
+
+
     String serachData = "";
+    private bool showGrid = false;
+    private bool showGrid_quantityFormLocailName = false;
+    private bool showGrid_quantityFormLocailName_1 = false;
     private List<Product> product = new();
+    class QuantityFormLocailName
+    {
+        public string? NamProduct { get; set; }
+        public string? NameLocail { get; set; }
+        public int QuantityProduction { get; set; }
+    }
+    private List<QuantityFormLocailName> quantityFormLocailname;
+
+
+
     public void findToName()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.Name == serachData
                    select p).ToList();
@@ -66,6 +111,9 @@
 
     public void findToId()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.ProductID == Convert.ToInt32(serachData)
                    select p).ToList();
@@ -73,6 +121,9 @@
 
     public void findToProductNumber()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.ProductNumber == serachData
                    select p).ToList();
@@ -80,12 +131,19 @@
 
     public void findToProductModel()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.ProductModelID == Convert.ToInt32(serachData)
                    select p).ToList();
     }
+
     public void findToProductLine()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.ProductLine == serachData
                    select p).ToList();
@@ -93,10 +151,46 @@
 
     public void findToWeight()
     {
+        showGrid = true;
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = false;
         product = (from p in DbContextAdventureWordks2022.Product
                    where p.Weight == Convert.ToInt32(serachData)
                    select p).ToList();
     }
 
+    public void quantityFormLocailName()
+    {
+        showGrid_quantityFormLocailName = true;
+        showGrid_quantityFormLocailName_1 = false;
+        showGrid = false;
+        quantityFormLocailname = (from p in DbContextAdventureWordks2022.ProductInventories
+                                  join sp in DbContextAdventureWordks2022.Product on p.ProductID equals sp.ProductID
+                                  join dc in DbContextAdventureWordks2022.Locations on p.LocationID equals dc.LocationID
+                                  where sp.Name == serachData || dc.Name == serachData
+                                  select new QuantityFormLocailName
+                                      {
+                                          NamProduct = sp.Name,
+                                          NameLocail = dc.Name,
+                                          QuantityProduction = p.Quantity
+                                      }).ToList();                
+    }
+
+    public void TongSoLuong()
+    {
+        showGrid_quantityFormLocailName = false;
+        showGrid_quantityFormLocailName_1 = true;        
+        showGrid = false;
+        quantityFormLocailname = (from p in DbContextAdventureWordks2022.ProductInventories
+                                  join sp in DbContextAdventureWordks2022.Product on p.ProductID equals sp.ProductID
+                                  join dc in DbContextAdventureWordks2022.Locations on p.LocationID equals dc.LocationID
+                                  where sp.Name == serachData
+                                  group p by new { sp.Name} into g
+                                  select new QuantityFormLocailName
+                                      {
+                                          NamProduct = g.Key.Name,
+                                          QuantityProduction = g.Sum(x => x.Quantity)
+                                      }).ToList();
+    }
 
 }
