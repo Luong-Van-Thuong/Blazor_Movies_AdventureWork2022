@@ -7,18 +7,22 @@
 @inject IDbContextFactory<Blazor_Movies_02.Data.AdventureWorks2022> DbFactory
 
 <h3>Product List</h3>
-
-<p>
-    <a href="adventureworkproduct/create">Create New</a>
-</p>
-<p>
-    <a href="adventureworkproduct/product_summarydata">Summary Data</a>
-</p>
 <div>
     <form action="/adventureworkproduct" data-enhance>
         <input type="search" name="titleFilter" />
         <input type="submit" value="Search" />
     </form>
+</div>
+<div class="flex-fill ma">
+    <NavLink class="btn btn-primary m-4" href="adventureworkproduct/create">
+        Create 
+    </NavLink>
+    <NavLink class="btn btn-primary m-4" href="adventureworkproduct/product_summarydata">
+        Summary Data
+    </NavLink>
+    <NavLink class="btn btn-primary m-4" href="adventureworkproduct/find_data">
+        Find Data
+    </NavLink>    
 </div>
 
 <QuickGrid Items="FilteredMovies" Class="table">

@@ -9,11 +9,48 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+<div class="mt-3">
+    @* <input @onchange="OnChange"/> *@
+    @* //Link data bình thường *@
+    @* <input @bind="@text"/> *@
+    @* Link data có thêm sự kiện  và thêm sự kiện sau đó sẽ làm gì*@
+    <input @bind="@text" @bind:event="oninput" @bind:after="Search"/>
+    <button @onclick="OnClick">Clear</button>
+    <p>@text</p>
+    <p>@SearchResult</p>
+</div>
+
 @code {
     private int currentCount = 0;
+    string text = "";
+    string SearchResult = "";
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    // private void OnChange(ChangeEventArgs e)
+    // {
+    //     text = (string)e.Value!;        
+    // }
+
+    // private void AddString()
+    // {
+    //     text = 
+    // }
+
+    private void OnClick()
+    {
+        text = "";
+        Console.WriteLine("Hello World");
+    }
+
+    async Task Search()
+    {
+        SearchResult = "Searching.......";
+        await Task.Delay(2000);
+        SearchResult = $"Found {Random.Shared.Next()} results!";
+
     }
 }

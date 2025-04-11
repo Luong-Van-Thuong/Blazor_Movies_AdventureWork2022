@@ -12,8 +12,10 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Blazor_Movies_02.Models
 @using Blazor_Movies_02.Data
-@* @implements IAsyncDisposable *@
 @inject Blazor_Movies_02.Data.BlazorMoviesRoadMap DbContext
 @inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMoviesRoadMap> DbFactory
 @inject IDbContextFactory<Blazor_Movies_02.Data.BlazorMovies02Context> DbFactory2
 @inject NavigationManager NavigationManager
+@using Microsoft.Azure.Management.Search.Fluent
+@inject AdventureWorks2022 DbContext
+@inject AdventureWorks2022 DbContextAdventureWordks2022

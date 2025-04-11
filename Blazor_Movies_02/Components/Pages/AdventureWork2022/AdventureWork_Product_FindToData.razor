@@ -1,0 +1,102 @@
+﻿@page "/adventureworkproduct/find_data"
+@rendermode InteractiveServer
+<h3>AdventureWork_Product_FindToData</h3>
+
+<div >
+    <input @bind="@serachData" />
+</div>
+<div>
+    <NavLink class="btn btn-primary mt-4" href="/adventureworkproduct">
+        Home Product 
+    </NavLink>
+</div>
+
+<div class="my-4">
+    <button class="btn btn-primary m-1" @onclick="findToName">Tìm theo Name</button>
+    <button class="btn btn-primary m-1" @onclick="findToId">Tìm theo ID </button>
+    <button class="btn btn-primary m-1" @onclick="findToProductNumber">Tìm theo Product Number </button>
+    <button class="btn btn-primary m-1" @onclick="findToProductModel">Tìm theo mẫu Model </button>
+    <button class="btn btn-primary m-1" @onclick="findToProductLine">Tìm theo product line </button>
+    <button class="btn btn-primary m-1" @onclick="findToWeight">Tìm theo weight </button>
+    <button class="btn btn-primary m-1" >Tìm theo  </button>
+
+</div>
+<p>@serachData</p>
+
+<QuickGrid TGridItem="Product" Items="@product.AsQueryable()" Class="table" ItemKey="@(p => p.ProductID)">
+    <PropertyColumn Property="p => p.ProductID" Title="ID" />
+    <PropertyColumn Property="p => p.Name" />
+    <PropertyColumn Property="p => p.ProductNumber" />
+    <PropertyColumn Property="p => p.MakeFlag" />
+    <PropertyColumn Property="p => p.FinishedGoodsFlag" />
+    <PropertyColumn Property="p => p.Color" />
+    <PropertyColumn Property="p => p.SafetyStockLevel" />
+    <PropertyColumn Property="p => p.ReorderPoint" />
+    <PropertyColumn Property="p => p.ListPrice" />
+    <PropertyColumn Property="p => p.Size" />
+    <PropertyColumn Property="p => p.SizeUnitMeasureCode" />
+    <PropertyColumn Property="p => p.WeightUnitMeasureCode" />
+    <PropertyColumn Property="p => p.Weight" />
+    <PropertyColumn Property="p => p.DaysToManufacture" />
+    <PropertyColumn Property="p => p.ProductLine" />
+    <PropertyColumn Property="p => p.Class" />
+    <PropertyColumn Property="p => p.Style" />
+    <PropertyColumn Property="p => p.ProductSubcategoryID" />
+    <PropertyColumn Property="p => p.ProductModelID" />
+    <PropertyColumn Property="p => p.SellEndDate" />
+    <PropertyColumn Property="p => p.DiscontinuedDate" />
+    <PropertyColumn Property="p => p.Rowguid" />
+    <PropertyColumn Property="p => p.ModifiedDate" />
+
+    <TemplateColumn Context="product">
+        <a href="@($"adventureworkproduct/edit?id={product.ProductID}")">Edit</a> |
+        <a href="@($"adventureworkproduct/details?id={product.ProductID}")">Details</a> |
+        <a href="@($"adventureworkproduct/delete?id={product.ProductID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+@code {
+    String serachData = "";
+    private List<Product> product = new();
+    public void findToName()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.Name == serachData
+                   select p).ToList();
+    }
+
+    public void findToId()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.ProductID == Convert.ToInt32(serachData)
+                   select p).ToList();
+    }
+
+    public void findToProductNumber()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.ProductNumber == serachData
+                   select p).ToList();
+    }
+
+    public void findToProductModel()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.ProductModelID == Convert.ToInt32(serachData)
+                   select p).ToList();
+    }
+    public void findToProductLine()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.ProductLine == serachData
+                   select p).ToList();
+    }   
+
+    public void findToWeight()
+    {
+        product = (from p in DbContextAdventureWordks2022.Product
+                   where p.Weight == Convert.ToInt32(serachData)
+                   select p).ToList();
+    }
+
+
+}

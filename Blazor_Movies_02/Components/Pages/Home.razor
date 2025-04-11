@@ -1,9 +1,44 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home Connect Database And SQL Systax</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+Welcome to your new app 0.
 <br />
-Hello Thuong
+@* <ul>
+    @foreach (var item in ToDoList)
+    {
+        <li>@item</li>
+    }
+</ul> *@
+
+<div  class="mt-3">
+    <input @bind="@Title" />
+    <button @onclick="OnClick">Clear</button>
+    <p>@Title</p>
+</div>
+
+
+
+@code{
+    string Title = "";
+    List<String> ToDoList  = new List<string>();
+    public string? IsDone { get; set; }
+    public void AddNewToDo()
+    {
+        if (!string.IsNullOrEmpty(Title))
+        {
+            ToDoList.Add(Title);
+            Title = string.Empty;
+        }
+    }
+
+    private void OnClick()
+    {
+        Title = "Hello Thuong";
+        ToDoList.Add(Title);
+        Console.WriteLine("Hello World");
+    }
+}
