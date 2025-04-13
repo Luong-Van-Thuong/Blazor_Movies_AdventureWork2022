@@ -14,29 +14,5 @@ namespace Blazor_Movies_02.Data
             : base(options)
         {
         }
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Product>()
-        //        .ToTable("Product", "Production");
-        //    modelBuilder.Entity<ProductInventory>()
-        //        .ToTable("ProductInventory", "Production");
-        //    modelBuilder.Entity<Location>()
-        //        .ToTable("Location", "Production");
-
-        //    modelBuilder.Entity<ProductInventory>()
-        //        .HasKey(pi => new { pi.ProductID, pi.LocationID });
-
-        //    modelBuilder.Entity<ProductInventory>()
-        //        .HasOne(pi => pi.Product)
-        //        .WithMany(p => p.ProductInventories)
-        //        .HasForeignKey(pi => pi.ProductID);
-
-        //    modelBuilder.Entity<ProductInventory>()
-        //        .HasOne(pi => pi.Location)
-        //        .WithMany(l => l.ProductInventories)
-        //        .HasForeignKey(pi => pi.LocationID);
-
-        //    //base.OnModelCreating(modelBuilder);
-        //}
     }
 }

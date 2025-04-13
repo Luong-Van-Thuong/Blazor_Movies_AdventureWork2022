@@ -1,0 +1,107 @@
+﻿@page "/adventureworkproductinventories/edit"
+@inject DbContextOptions _dbContextOptions
+<h3>AdventureWork_ProductInventories_Edit</h3>
+@if(model is null){
+    <p><em>Loading......</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="model" OnValidSubmit="UpdateModel" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="mb-3">
+                    <label for="productid" class="form-label">Product ID:</label>
+                    <InputNumber id="productid" @bind-Value="model.ProductID" class="form-control" />
+                    <ValidationMessage For="@(() => model.ProductID)" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="locationid" class="form-label">Location ID:</label>
+                    <InputNumber id="locationid" @bind-Value="model.LocationID" class="form-control" />
+                    <ValidationMessage For="@(() => model.LocationID)" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="shelf" class="form-label">Shelf:</label>
+                    <InputText id="shelf" @bind-Value="model.Shelf" class="form-control" />
+                    <ValidationMessage For="@(() => model.Shelf)" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="bin" class="form-label">Bin:</label>
+                    <InputText id="bin" @bind-Value="binString" class="form-control" />
+                    <ValidationMessage For="@(() => binString)" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity:</label>
+                    <InputNumber id="quantity" @bind-Value="model.Quantity" class="form-control" />
+                    <ValidationMessage For="@(() => model.Quantity)" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label>Rowguid:</label>
+                    <p class="form-control-plaintext">@model.rowguid</p>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+    private ProductInventory? model;
+    private string binString
+    {
+        get => model?.Bin.ToString() ?? "";
+        set
+        {
+            if (byte.TryParse(value, out var result) && model != null)
+            {
+                model.Bin = result;
+            }
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        model = await DbContextAdventureWordks2022.ProductInventories.FirstOrDefaultAsync(m => m.ProductID == Id);
+        if (model is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+    private async Task InsertModel()
+    {
+        if (model != null)
+        {
+            DbContextAdventureWordks2022.ProductInventories.Update(model);
+            await DbContextAdventureWordks2022.SaveChangesAsync();
+            NavigationManager.NavigateTo("/adventureworkproductinventories/details?id=" + model.ProductID);
+        }
+    }
+
+    private async Task UpdateModel()
+    {        
+        DbContextAdventureWordks2022.Attach(model!).State = EntityState.Modified;
+        try
+        {
+            await DbContextAdventureWordks2022.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProductInventoryExists(model!.ProductID))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        } 
+        NavigationManager.NavigateTo("/adventureworkproductinventories");
+    }
+
+    private bool ProductInventoryExists(int id)
+    {
+        return DbContextAdventureWordks2022.ProductInventories.Any(e => e.ProductID == id);
+    }
+}

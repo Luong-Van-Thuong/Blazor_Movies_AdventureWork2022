@@ -95,10 +95,8 @@
 
 @code {
     private Product? model;
-
     [SupplyParameterFromQuery]
     private int Id { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();

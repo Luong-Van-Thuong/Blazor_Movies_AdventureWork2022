@@ -5,6 +5,11 @@
 <div >
     <input @bind="@serachData" />
 </div>
+
+<div>
+    <input @bind="soluonghangtonkho" placeholder="Nhập số lượng cần kiểm tra" type="number" />
+</div>
+
 <div>
     <NavLink class="btn btn-primary mt-4" href="/adventureworkproduct">
         Home Product 
@@ -22,14 +27,13 @@
 </div>
 
 <div>
-    <button class="btn btn-primary m-1" @onclick="quantityFormLocailName">Số lượng sản phẩm tồn kho theo vị trí </button> @* Tên sản phẩm (Product.Name),Vị trí lưu trữ (Location.Name),Số lượng tồn kho (ProductInventory.Quantity) *@
-    <button class="btn btn-primary m-1" @onclick="TongSoLuong">Tổng tồn kho của mỗi sản phẩm</button> @* Tên sản phẩm,Tổng tồn kho *@
-    <button class="btn btn-primary m-1">Tổng tồn kho của mỗi sản phẩm theo vị trí</button> @* Tên sản phẩm,Tổng tồn kho theo vị trí *@
-    <button class="btn btn-primary m-1">Tổng số sản phẩm sắp hết hàng</button> @* những sản phẩm có tồn kho tổng nhỏ hơn một ngưỡng nhất định (ví dụ 100). *@
+    <button class="btn btn-primary m-1" @onclick="quantityFormLocailName">Số lượng sản phẩm tồn kho theo vị trí </button> @* Tên sản phẩm (Product.Name),Vị trí lưu trữ (Location.Name),Số lượng tồn kho (ProductInventory.Quantity) *@    
+    <button class="btn btn-primary m-1" @onclick="SoLuongSanPhamSapHetHang">Tổng số sản phẩm sắp hết hàng</button> @* những sản phẩm có tồn kho tổng nhỏ hơn một ngưỡng nhất định (ví dụ 100). *@
     <button class="btn btn-primary m-1">Số lượng hàng tồn kho</button> @* Cho phép người dùng cập nhật số lượng tồn kho cho một sản phẩm tại một vị trí cụ thể. *@
     <button class="btn btn-primary m-1">Export To Excel</button> @* Export tồn kho ra Excel *@
-    <button class="btn btn-primary m-1">Export To Excel</button> @* Export tồn kho ra PDF *@
+    <button class="btn btn-primary m-1">Export To PDF</button> @* Export tồn kho ra PDF *@
 </div>
+
 <p>@serachData</p>
 @if (showGrid)
 {
@@ -69,34 +73,43 @@
 @if (showGrid_quantityFormLocailName)
 {
     <QuickGrid TGridItem="QuantityFormLocailName" Items="@quantityFormLocailname.AsQueryable()" Class="table">
+        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.ProductId" Title="ID" />
         <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NamProduct" Title="Tên sản phẩm" />
         <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NameLocail" Title="Tên kho" />
         <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.QuantityProduction" Title="Số lượng sản phẩm còn" />
-    </QuickGrid>
+        <TemplateColumn Title="Công cụ" Context="item">
+            <a href="@($"adventureworkproductinventories/edit?id={item.ProductId}")">Edit</a> |
+            <a href="@($"adventureworkproductinventories/details?id={item.ProductId}")">Details</a> |
+            <a href="@($"adventureworkproduct/delete?id={item.ProductId}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>    
+    <p>@kiemtra</p>
 } 
 @if (showGrid_quantityFormLocailName_1)
 {
-    <QuickGrid TGridItem="QuantityFormLocailName" Items="@quantityFormLocailname.AsQueryable()" Class="table">
-        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.NamProduct" Title="Tên sản phẩm" />
-        <PropertyColumn Property="quantityFormLocailname => quantityFormLocailname.QuantityProduction" Title="Số lượng sản phẩm còn" />
+    <QuickGrid TGridItem="QuantityFormLocailName" Items="@quantityFormLocailname2.AsQueryable()" Class="table">
+        <PropertyColumn Property="quantityFormLocailname2 => quantityFormLocailname2.NamProduct" Title="Tên sản phẩm" />
+        <PropertyColumn Property="quantityFormLocailname2 => quantityFormLocailname2.QuantityProduction" Title="Số lượng sản phẩm còn" />
     </QuickGrid>
 }
 @code {
-
-
     String serachData = "";
     private bool showGrid = false;
     private bool showGrid_quantityFormLocailName = false;
     private bool showGrid_quantityFormLocailName_1 = false;
     private List<Product> product = new();
+    private int tongsoluong = 0;
+    public int? soluonghangtonkho { get; set; }
+    public string? kiemtra { get; set; }
     class QuantityFormLocailName
     {
+        public int ProductId { get; set; }
         public string? NamProduct { get; set; }
         public string? NameLocail { get; set; }
         public int QuantityProduction { get; set; }
     }
     private List<QuantityFormLocailName> quantityFormLocailname;
-
+    private List<QuantityFormLocailName> quantityFormLocailname2;
 
 
     public void findToName()
@@ -162,7 +175,7 @@
     public void quantityFormLocailName()
     {
         showGrid_quantityFormLocailName = true;
-        showGrid_quantityFormLocailName_1 = false;
+        showGrid_quantityFormLocailName_1 = true;
         showGrid = false;
         quantityFormLocailname = (from p in DbContextAdventureWordks2022.ProductInventories
                                   join sp in DbContextAdventureWordks2022.Product on p.ProductID equals sp.ProductID
@@ -170,27 +183,75 @@
                                   where sp.Name == serachData || dc.Name == serachData
                                   select new QuantityFormLocailName
                                       {
+                                          ProductId = p.ProductID,
                                           NamProduct = sp.Name,
                                           NameLocail = dc.Name,
                                           QuantityProduction = p.Quantity
-                                      }).ToList();                
+                                      }).ToList();  
+        tongsoluong = TongSoLuong();
     }
 
-    public void TongSoLuong()
-    {
-        showGrid_quantityFormLocailName = false;
-        showGrid_quantityFormLocailName_1 = true;        
+    public int TongSoLuong()
+    {             
         showGrid = false;
-        quantityFormLocailname = (from p in DbContextAdventureWordks2022.ProductInventories
-                                  join sp in DbContextAdventureWordks2022.Product on p.ProductID equals sp.ProductID
-                                  join dc in DbContextAdventureWordks2022.Locations on p.LocationID equals dc.LocationID
-                                  where sp.Name == serachData
-                                  group p by new { sp.Name} into g
-                                  select new QuantityFormLocailName
+        quantityFormLocailname2 = (from p in DbContextAdventureWordks2022.ProductInventories
+                                   join sp in DbContextAdventureWordks2022.Product on p.ProductID equals sp.ProductID
+                                   join dc in DbContextAdventureWordks2022.Locations on p.LocationID equals dc.LocationID
+                                   where sp.Name == serachData
+                                   group p by new { sp.Name} into g
+                                   select new QuantityFormLocailName
                                       {
                                           NamProduct = g.Key.Name,
                                           QuantityProduction = g.Sum(x => x.Quantity)
                                       }).ToList();
+        int soluong = 0;
+        if (quantityFormLocailname2 != null && quantityFormLocailname2.Count > 0)
+        {
+            soluong = quantityFormLocailname2[0].QuantityProduction;
+        }
+        return soluong;
+    }
+
+    public void SoLuongSanPhamSapHetHang()
+    {
+        showGrid = false;
+        showGrid_quantityFormLocailName = true;
+        showGrid_quantityFormLocailName_1 = false;
+
+        var query = DbContextAdventureWordks2022.ProductInventories
+            .Join(DbContextAdventureWordks2022.Product, p => p.ProductID, sp => sp.ProductID, (p, sp) => new { p, sp })
+            .Join(DbContextAdventureWordks2022.Locations, ps => ps.p.LocationID, dc => dc.LocationID, (ps, dc) => new { ps.p, ps.sp, dc });
+
+        if (serachData == "ALL")
+        {
+            query = query.Where(x => x.p.Quantity < soluonghangtonkho);
+        }
+        else
+        {
+            query = query.Where(x => x.p.Quantity < soluonghangtonkho && x.sp.Name == serachData);
+        }
+
+        quantityFormLocailname = query.Select(x => new QuantityFormLocailName
+            {
+                ProductId = x.p.ProductID,
+                NamProduct = x.sp.Name,
+                NameLocail = x.dc.Name,
+                QuantityProduction = x.p.Quantity
+            }).ToList();
+
+        if (quantityFormLocailname.Count == 0)
+        {
+            kiemtra = "Không tìm thấy số lượng hàng tồn kho nhỏ hơn " + soluonghangtonkho;
+        }
+        else
+        {
+            kiemtra = String.Empty;
+        }
+    }
+
+    public void capnhatsoluongtonkho()
+    {
+        
     }
 
 }

@@ -1,0 +1,44 @@
+﻿@page "/adventureworkproductinventories/details"
+<h3>AdventureWorks ProductInventories Detial</h3>
+<div>
+    @if(model is null){
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Product ID</dt>
+            <dd class="col-sm-9">@model.ProductID</dd>
+            <dt class="col-sm-3">Location ID</dt>
+            <dd class="col-sm-9">@model.LocationID</dd>
+            <dt class="col-sm-3">Shelf</dt>
+            <dd class="col-sm-9">@model.Shelf</dd>
+            <dt class="col-sm-3">Bin</dt>
+            <dd class="col-sm-9">@model.Bin</dd>
+            <dt class="col-sm-3">Quantity</dt>
+            <dd class="col-sm-9">@model.Quantity</dd>
+            <dt class="col-sm-3">Rowguid</dt>
+            <dd class="col-sm-9">@model.rowguid</dd>
+            <dt class="col-sm-3">Modified Date</dt>
+            <dd class="col-sm-9">@model.ModifiedDate</dd>
+
+        </dl>
+        <div>
+            <a href="@($"/adventureworkproduct/find_data")">Back to List</a>
+        </div>
+    }
+</div>
+@code {
+    private ProductInventory? model;
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        model = await DbContextAdventureWordks2022.ProductInventories.FirstOrDefaultAsync(m => m.ProductID == Id);
+
+        if (model is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
